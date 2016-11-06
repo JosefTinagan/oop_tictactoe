@@ -13,13 +13,15 @@ class TicTacToe
 		@sign = pick_sign
 		@@players += 1
 		@mode = pick_mode
-
+		@computer_sign = @sign == "X" ? "O" : "X" 
 	end
 
 	def turn
+		#puts @@turn
 		if @@turn ==  9
 			game_over()
 		end
+		@@turn += 1
 		puts "#{@name} is playing"
 		puts "Your sign is #{@sign}"
 		puts "Board: "
@@ -35,21 +37,22 @@ class TicTacToe
 		puts "Updated Board:"
 		TicTacToe.game_board
 		puts
-		check_victory?()
-
-		@@turn += 1
+		check_victory?("PLAYER")
 		if (@mode == "COMPUTER")
 			computer_turn
 		end
+		
+		
 	end
 
 	private
 
 	def computer_turn
+		#puts @@turn
 		if @@turn ==  9
 			game_over()
 		end
-		@computer_sign = @sign == "X" ? "O" : "X" 
+		@@turn += 1
 		computer_array_of_choices = ["TL","T","TR","ML","M","MR","BL","B","BR"]
 		x = rand(0..8)
 		
@@ -61,9 +64,9 @@ class TicTacToe
 		puts "Updated Board:"
 		TicTacToe.game_board
 		puts
-		check_victory?()
-		@@turn += 1
+		check_victory?("COMPUTER")
 		turn()
+
 	end
 
 	def self.game_board
@@ -77,6 +80,7 @@ class TicTacToe
 	end
 
 	def change_board(choice,type)
+		choice = choice.upcase
 		#check if spot is taken
 		taken = false
 		@@arr_temp.each do |x|
@@ -87,6 +91,7 @@ class TicTacToe
 
 		if taken
 			if type == "COMPUTER"
+				puts "Computer goofed!"
 				@@turn -= 1
 				computer_turn()
 
@@ -105,67 +110,78 @@ class TicTacToe
 				else
 					@@game_board[0] = "#{@sign}"
 				end
+				@@arr_temp.push(choice)	
 			when "T" 
 				if type == "COMPUTER"
 					@@game_board[1] = "#{@computer_sign}"
 				else
 					@@game_board[1] = "#{@sign}"
 				end
+				@@arr_temp.push(choice)	
 			when "TR"
 				if type == "COMPUTER"
 					@@game_board[2] = "#{@computer_sign}"
 				else
 					@@game_board[2] = "#{@sign}"
 				end
+				@@arr_temp.push(choice)	
 			when "ML"
 				if type == "COMPUTER"
 					@@game_board[3] = "#{@computer_sign}"
 				else
 					@@game_board[3] = "#{@sign}"
 				end
+				@@arr_temp.push(choice)	
 			when "M"
 				if type == "COMPUTER"
 					@@game_board[4] = "#{@computer_sign}"
 				else
 					@@game_board[4] = "#{@sign}"
 				end
+				@@arr_temp.push(choice)	
 			when "MR"
 				if type == "COMPUTER"
 					@@game_board[5] = "#{@computer_sign}"
 				else
 					@@game_board[5] = "#{@sign}"
 				end
+				@@arr_temp.push(choice)	
 			when "BL" 
 				if type == "COMPUTER"
 					@@game_board[6] = "#{@computer_sign}"
 				else
 					@@game_board[6] = "#{@sign}"
 				end
+				@@arr_temp.push(choice)	
 			when "B"
 				if type == "COMPUTER"
 					@@game_board[7] = "#{@computer_sign}"
 				else
 					@@game_board[7] = "#{@sign}"
 				end
+				@@arr_temp.push(choice)	
 			when "BR" 
 				if type == "COMPUTER"
 					@@game_board[8] = "#{@computer_sign}"
 				else
 					@@game_board[8] = "#{@sign}"
 				end
+				@@arr_temp.push(choice)	
 			else 
 				puts 
 				puts "Not a valid choice... Try again"
 				@@turn -= 1
-				turn()
+				if type == "COMPUTER"
+					computer_turn()
+				else
+					turn()
+				end
 			end
-
-		@@arr_temp.push(choice)	
 		end
 		
 	end
 
-	def check_victory?
+	def check_victory?(type)
 		number_of_x = 0
 		number_of_o = 0
 
@@ -175,7 +191,7 @@ class TicTacToe
 			number_of_x += temp_a
 			number_of_o += temp_b
 		end
-		number_of_x, number_of_o = check_victory(number_of_x,number_of_o)
+		number_of_x, number_of_o = check_victory(number_of_x,number_of_o,type)
 		
 		#check middle row
 		for x in 3..5
@@ -183,7 +199,7 @@ class TicTacToe
 			number_of_x += temp_a
 			number_of_o += temp_b
 		end
-		number_of_x, number_of_o = check_victory(number_of_x,number_of_o)
+		number_of_x, number_of_o = check_victory(number_of_x,number_of_o,type)
 		
 		#check bottom row
 		for x in 6..8
@@ -191,7 +207,7 @@ class TicTacToe
 			number_of_x += temp_a
 			number_of_o += temp_b
 		end
-		number_of_x, number_of_o = check_victory(number_of_x,number_of_o)
+		number_of_x, number_of_o = check_victory(number_of_x,number_of_o,type)
 		
 
 		for x in 0..@@game_board.length - 1
@@ -205,7 +221,7 @@ class TicTacToe
 				end
 			end
 		end
-		number_of_x, number_of_o = check_victory(number_of_x,number_of_o)
+		number_of_x, number_of_o = check_victory(number_of_x,number_of_o,type)
 		
 		for x in 0..@@game_board.length - 1
 			#middle column
@@ -218,7 +234,7 @@ class TicTacToe
 				end	
 			end
 		end
-		number_of_x, number_of_o = check_victory(number_of_x,number_of_o)
+		number_of_x, number_of_o = check_victory(number_of_x,number_of_o,type)
 		
 		for x in 0..@@game_board.length - 1	
 			#right column
@@ -231,7 +247,7 @@ class TicTacToe
 				end	
 			end
 		end
-		number_of_x, number_of_o = check_victory(number_of_x,number_of_o)
+		number_of_x, number_of_o = check_victory(number_of_x,number_of_o,type)
 		
 	end
 	
@@ -274,25 +290,32 @@ class TicTacToe
 		end
 	end
 
-	def check_victory(number_of_x, number_of_o)
+	def check_victory(number_of_x, number_of_o,type)
 		if number_of_x == 3
-			victory
+			victory(type)
 		elsif number_of_o == 3
-			victory
+			victory(type)
 		else
 			return 0,0
 		end
 	end
 
-	def victory()
-		puts
-		puts "The #{@sign} sign is victorious!"
-		if @name == "You"
-			puts "#{@name} win!"
+	def victory(type)
+		if type == "PLAYER"
+			puts
+			puts "The #{@sign} sign is victorious!"
+			if @name == "You"
+				puts "#{@name} win!"
+			else
+				puts "#{@name} wins!"
+			end
+			exit
 		else
-			puts "#{@name} wins!"
+			puts
+			puts "The #{@computer_sign} sign is victorious!"
+			puts "Computer Wins!"
+			exit
 		end
-		exit
 	end
 
 	def game_over
