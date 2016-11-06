@@ -12,23 +12,11 @@ class TicTacToe
 		@name = name
 		@sign = pick_sign
 		@@players += 1
+		@mode = pick_mode
 
-		
-	end
-
-	def pick_sign
-		puts "Pick your sign? (X or O)"
-		x = gets.chomp
-		if x.upcase == "X" || x.upcase == "O"
-			return x.upcase
-		else
-			puts "Not a valid option, try again"
-			pick_sign()
-		end
 	end
 
 	def turn
-		
 		if @@turn ==  9
 			game_over()
 		end
@@ -42,16 +30,53 @@ class TicTacToe
 		puts "BL[Bottom Left], B[Bottom], BR[Bottom Right]"
 		puts "Where should you put your sign? :"
 		choice = gets.chomp
-		change_board(choice)
+		change_board(choice,"player")
 
 		puts "Updated Board:"
 		TicTacToe.game_board
 		puts
-		check_victory?() 
+		check_victory?()
+
 		@@turn += 1
+		if (@mode == "COMPUTER")
+			computer_turn
+		end
 	end
 
-	def change_board(choice)
+	private
+
+	def computer_turn
+		if @@turn ==  9
+			game_over()
+		end
+		@computer_sign = @sign == "X" ? "O" : "X" 
+		computer_array_of_choices = ["TL","T","TR","ML","M","MR","BL","B","BR"]
+		x = rand(0..8)
+		
+		puts "Computer is playing"
+
+		choice = computer_array_of_choices[x]
+		change_board(choice,"COMPUTER")
+
+		puts "Updated Board:"
+		TicTacToe.game_board
+		puts
+		check_victory?()
+		@@turn += 1
+		turn()
+	end
+
+	def self.game_board
+		@@game_board.each_with_index do |x,y|
+			print "#{x} "
+				if y == 2 || y == 5
+					puts
+				end
+		end
+			
+	end
+
+	def change_board(choice,type)
 		#check if spot is taken
 		taken = false
 		@@arr_temp.each do |x|
@@ -61,22 +86,73 @@ class TicTacToe
 		end
 
 		if taken
-			puts "This spot is already taken..."
+			if type == "COMPUTER"
+				@@turn -= 1
+				computer_turn()
+
+			else
+				puts "This spot is already taken..."
 				puts "Try again..."
 				puts 
 				@@turn -= 1
 				turn()
+			end
 		else
 			case choice.upcase
-			when "TL" then @@game_board[0] = "#{@sign}"
-			when "T"  then @@game_board[1] = "#{@sign}"
-			when "TR" then @@game_board[2] = "#{@sign}"
-			when "ML" then @@game_board[3] = "#{@sign}"
-			when "M"  then @@game_board[4] = "#{@sign}"
-			when "MR" then @@game_board[5] = "#{@sign}"
-			when "BL" then @@game_board[6] = "#{@sign}"
-			when "B"  then @@game_board[7] = "#{@sign}"
-			when "BR" then @@game_board[8] = "#{@sign}"
+			when "TL"
+				if type == "COMPUTER"
+					@@game_board[0] = "#{@computer_sign}"
+				else
+					@@game_board[0] = "#{@sign}"
+				end
+			when "T" 
+				if type == "COMPUTER"
+					@@game_board[1] = "#{@computer_sign}"
+				else
+					@@game_board[1] = "#{@sign}"
+				end
+			when "TR"
+				if type == "COMPUTER"
+					@@game_board[2] = "#{@computer_sign}"
+				else
+					@@game_board[2] = "#{@sign}"
+				end
+			when "ML"
+				if type == "COMPUTER"
+					@@game_board[3] = "#{@computer_sign}"
+				else
+					@@game_board[3] = "#{@sign}"
+				end
+			when "M"
+				if type == "COMPUTER"
+					@@game_board[4] = "#{@computer_sign}"
+				else
+					@@game_board[4] = "#{@sign}"
+				end
+			when "MR"
+				if type == "COMPUTER"
+					@@game_board[5] = "#{@computer_sign}"
+				else
+					@@game_board[5] = "#{@sign}"
+				end
+			when "BL" 
+				if type == "COMPUTER"
+					@@game_board[6] = "#{@computer_sign}"
+				else
+					@@game_board[6] = "#{@sign}"
+				end
+			when "B"
+				if type == "COMPUTER"
+					@@game_board[7] = "#{@computer_sign}"
+				else
+					@@game_board[7] = "#{@sign}"
+				end
+			when "BR" 
+				if type == "COMPUTER"
+					@@game_board[8] = "#{@computer_sign}"
+				else
+					@@game_board[8] = "#{@sign}"
+				end
 			else 
 				puts 
 				puts "Not a valid choice... Try again"
@@ -172,6 +248,32 @@ class TicTacToe
 		
 	end
 
+	def pick_sign
+		puts "Pick your sign? (X or O)"
+
+		x = gets.chomp
+		if x.upcase == "X" || x.upcase == "O"
+			return x.upcase
+		else
+			puts "Not a valid option, try again"
+			pick_sign()
+		end
+	end
+
+	def pick_mode
+		puts "Would you like to play with the Computer? (y/n)"
+		mode = gets.chomp
+		if mode.upcase == "Y"
+			return "COMPUTER"
+		elsif mode.upcase == "N"
+			return "NORMAL"
+		else
+			"Not a valid choice..."
+			"Try again..."
+			pick_mode
+		end
+	end
+
 	def check_victory(number_of_x, number_of_o)
 		if number_of_x == 3
 			victory
@@ -180,16 +282,6 @@ class TicTacToe
 		else
 			return 0,0
 		end
-	end
-
-	def self.game_board
-		@@game_board.each_with_index do |x,y|
-			print "#{x} "
-				if y == 2 || y == 5
-					puts
-				end
-		end
-			
 	end
 
 	def victory()
@@ -213,7 +305,7 @@ class TicTacToe
 		@@players
 	end
 end
-
+=begin
 player1 = TicTacToe.new
 player2 = TicTacToe.new("Player2")
 #TicTacToe.game_board
@@ -227,3 +319,7 @@ player1.turn
 player2.turn
 player1.turn
 player2.turn
+=end
+
+tt = TicTacToe.new("Trisk")
+tt.turn
